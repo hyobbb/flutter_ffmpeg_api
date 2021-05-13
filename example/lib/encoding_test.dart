@@ -109,15 +109,12 @@ class _EncodingTestState extends State<EncodingTest> {
             Positioned.fill(
               child: Container(
                 color: Colors.white.withOpacity(0.4),
-                child: AbsorbPointer(
-                  absorbing: isRunning,
-                  child: Center(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        _api.cancelTask();
-                      },
-                      child: Text('Cancel'),
-                    ),
+                child: Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      _api.cancelTask();
+                    },
+                    child: Text('Cancel'),
                   ),
                 ),
               ),
@@ -127,6 +124,9 @@ class _EncodingTestState extends State<EncodingTest> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.play_arrow),
         onPressed: () async {
+          setState(() {
+            isRunning = true;
+          });
           try {
             final result = await _api.encodeVideo(
               EncodingOption(
@@ -139,11 +139,18 @@ class _EncodingTestState extends State<EncodingTest> {
                 overlays: overlays,
               ),
             );
+
+
+            setState(() {
+              isRunning = false;
+            });
+
             Navigator.of(context).pushReplacementNamed(
                 EncodingResultScreen.route,
                 arguments: result);
           } catch (e, s) {
             setState(() {
+              isRunning = false;
               msg = e.toString();
             });
           }
